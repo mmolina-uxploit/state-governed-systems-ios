@@ -2,7 +2,9 @@
 
 ## Modelado de Decisiones y Estados
 
-Es un **argumento técnico ejecutable**: Cómo el diseño de tipos y estados puede gobernar un sistema completo —desde el dominio hasta la interfaz— eliminando errores antes de que existan.
+Este repositorio no es una demo de UI ni un catálogo de features.
+
+Es un **argumento técnico ejecutable**: una exploración de cómo el diseño de tipos y estados puede gobernar un sistema completo —desde el dominio hasta la interfaz— eliminando errores antes de que existan.
 
 La app resultante es mínima por diseño. El valor del proyecto no está en lo que hace, sino en **cómo decide existir**.
 
@@ -25,16 +27,17 @@ El foco es **pensar sistemas**.
 
 ## 🧠 Principio Rector
 
-> Si una decisión importante vive solo en la UI, el sistema ya perdió.
+> Las decisiones de dominio deben ser verificables por el compilador.
 
-Las decisiones deben vivir:
+Este proyecto parte de una premisa práctica:
 
-* En el dominio
-* En los tipos
-* En funciones puras
-* En lugares donde el compilador pueda protegerlas
+* Las decisiones críticas no deben depender de convenciones de equipo
+* No deben vivir en la UI
+* No deben requerir tests defensivos para descubrir inconsistencias
 
-La UI solo **obedece**.
+Las decisiones deben residir en el dominio, expresadas mediante tipos y transiciones explícitas, donde el compilador pueda validarlas de forma determinística.
+
+La UI se limita a renderizar el estado actual del sistema.
 
 ---
 
@@ -157,32 +160,42 @@ El proyecto se considera exitoso si:
 
 ---
 
-## 🧠 Filosofía de Cierre
+## 🧠 Cierre Técnico
 
-Este repositorio no busca impresionar por cantidad de código.
+Este repositorio no busca demostrar conocimiento de frameworks ni patrones de moda.
 
-Busca demostrar que:
+Busca demostrar una forma de ingeniería orientada a:
 
-* El costo de modelar bien se paga una sola vez
-* El costo de no hacerlo se paga en cada bug
+* Reducción de riesgo sistémico
+* Eliminación de clases completas de bugs
+* Escalabilidad cognitiva en equipos
+* Refactors seguros a largo plazo
 
-Cuando el dominio está bien diseñado:
+El diseño explícito de estados y transiciones no es un lujo académico: es una estrategia para reducir costos de mantenimiento y dependencia de conocimiento tácito.
 
-* El compilador trabaja para vos
-* Los tests confirman, no descubren
-* La UI se vuelve trivial
+Cuando el dominio está correctamente modelado:
 
-Ese es el punto.
+* El compilador detecta inconsistencias temprano
+* Los tests validan comportamiento, no corrigen diseño
+* La UI permanece estable ante cambios internos
+
+Este enfoque es especialmente valioso en contextos donde:
+
+* El producto evoluciona rápidamente
+* Los equipos crecen o rotan
+* El costo de un bug en producción es alto
+
+Ese es el público de este proyecto.
 
 ---
 
-## 📌 Próximo Paso
+## 📌 Orden de Desarrollo
 
-A partir de este README, el proyecto se desarrolla en este orden:
+A partir de este README, el proyecto se desarrolla estrictamente en este orden:
 
-1. Modelado de estados como tipos
+1. Modelado de estados como tipos (contrato del dominio)
 2. Definición de eventos explícitos
-3. Función pura de transición
+3. Función pura de transición (reducer)
 4. Introducción controlada de concurrencia
 5. Proyección del estado en SwiftUI
 
