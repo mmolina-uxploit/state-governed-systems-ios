@@ -1,0 +1,12 @@
+# Xcode
+.DS_Store
+/build
+/DerivedData
+
+# User-specific
+*.xcuserdatad
+UserInterfaceState.xcuserstate
+
+# Gemini
+ANALISIS_INICIAL.md
+ddpe_os/
