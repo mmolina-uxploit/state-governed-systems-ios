@@ -1,204 +1,69 @@
-# iOS · Swift · App Systems
+# StateGoverned
 
-## Modelado de Decisiones y Estados
+`StateGoverned` es una aplicación iOS escrita en SwiftUI que funciona como **caso de estudio** de una arquitectura guiada por estado, tipos y decisiones explícitas.
 
-Este repositorio no es una demo de UI ni un catálogo de features.
-
-Es un **argumento técnico ejecutable**: una exploración de cómo el diseño de tipos y estados puede gobernar un sistema completo —desde el dominio hasta la interfaz— eliminando errores antes de que existan.
-
-La app resultante es mínima por diseño. El valor del proyecto no está en lo que hace, sino en **cómo decide existir**.
+La app consume datos públicos de SpaceX, pero el objetivo principal no es el dominio espacial, sino **explorar cómo diseñar sistemas predecibles, testeables y razonables desde su núcleo**.
 
 ---
 
-## 🎯 Objetivo del Proyecto
+## Qué demuestra este proyecto
 
-Construir una app iOS que demuestre cómo:
+Este repositorio no es un tutorial paso a paso ni una plantilla de producción.  
+Es un ejemplo concreto de cómo:
 
-* El sistema de tipos de Swift puede actuar como **contrato del dominio**
-* Los estados inválidos pueden ser **imposibles de representar**
-* La UI puede convertirse en una **proyección pasiva del estado**, no en un lugar de decisiones
-* La documentación puede ser parte activa del sistema, no un artefacto posterior
-
-El foco no es SpaceX, ni networking, ni SwiftUI.
-
-El foco es **pensar sistemas**.
+- modelar el dominio usando el sistema de tipos
+- gobernar la aplicación desde estados explícitos
+- separar lógica pura de infraestructura
+- usar TDD como herramienta de diseño
+- documentar decisiones arquitectónicas como parte del sistema
 
 ---
 
-## 🧠 Principio Rector
+## Arquitectura guiada por estado
 
-> Las decisiones de dominio deben ser verificables por el compilador.
+El sistema sigue un flujo unidireccional:
 
-Este proyecto parte de una premisa práctica:
+- **State**  
+  Representa el estado completo y válido de la aplicación.
 
-* Las decisiones críticas no deben depender de convenciones de equipo
-* No deben vivir en la UI
-* No deben requerir tests defensivos para descubrir inconsistencias
+- **Event**  
+  Describe hechos que pueden ocurrir (acciones del usuario o del sistema).
 
-Las decisiones deben residir en el dominio, expresadas mediante tipos y transiciones explícitas, donde el compilador pueda validarlas de forma determinística.
+- **Reducer**  
+  Función pura `(State, Event) -> State` que define todas las transiciones posibles.
 
-La UI se limita a renderizar el estado actual del sistema.
+- **View (SwiftUI)**  
+  Proyección pasiva del estado. La UI no decide, reacciona.
 
----
-
-## 🛰️ Dominio Elegido
-
-Se utiliza la **API pública de SpaceX** como fuente de datos real.
-
-Motivo de la elección:
-
-* Datos incompletos y opcionales
-* Estados temporales (pasado / futuro)
-* Fallos reales de red y parseo
-* Necesidad de distinguir datos completos vs parciales
-
-Esto fuerza decisiones de diseño reales sin necesidad de backend propio.
-
-La API es solo un insumo. El dominio modelado es:
-
-> “Un sistema que intenta obtener y representar información de lanzamientos, sabiendo que puede fallar o recibir datos imperfectos.”
+Este enfoque permite razonar sobre el sistema sin ejecutar la app y trasladar errores del runtime al compile time.
 
 ---
 
-## 🧩 Estados del Sistema (Verdad de Producto)
+## Documentación
 
-El sistema puede encontrarse en uno —y solo uno— de los siguientes estados reales:
+Todo el material conceptual vive en [`Docs/`](Docs/README.md), incluyendo:
 
-* Estado inicial (nada ocurrió aún)
-* Carga en progreso (con o sin datos previos)
-* Datos cargados correctamente
-* Datos cargados de forma parcial
-* Error recuperable
-* Error no recuperable
+- **ARCHITECTURE.md**  
+  Decisiones arquitectónicas fundamentales y trade-offs asumidos.
 
-Estos estados son **mutuamente excluyentes**.
+- **TDD-AND-STATE-DRIVEN-DESIGN.md**  
+  Uso de TDD como herramienta de diseño en una arquitectura guiada por estado.
 
-Cualquier combinación fuera de esta lista es considerada **ilegal** y no debe poder representarse en el código.
+Estos documentos explican **por qué el código existe en esta forma**, no cómo escribirlo.
 
 ---
 
-## 🚫 Estados Prohibidos por Diseño
+## Cómo ejecutar el proyecto
 
-El sistema **no permite** representar situaciones como:
-
-* Cargando y en error al mismo tiempo
-* Error sin saber si es recuperable
-* Datos parciales tratados como completos
-* Retry disponible en errores fatales
-* Estados ambiguos que requieran lógica defensiva
-
-Si algo de esto es posible, el diseño se considera incorrecto.
+1. Clonar el repositorio.
+2. Abrir `StateGoverned.xcodeproj` en Xcode.
+3. Ejecutar en simulador o dispositivo físico.
 
 ---
 
-## 🧱 Enfoque de Diseño
+## Nota final
 
-El proyecto sigue estos principios:
+Este proyecto prioriza **claridad conceptual sobre conveniencia inmediata**.  
+Algunas decisiones implican más trabajo inicial, pero permiten un sistema más fácil de entender, modificar y discutir.
 
-* **Type-driven design**: los tipos expresan reglas del dominio
-* **State-driven architecture**: el estado gobierna el flujo
-* **Inmutabilidad por defecto**: la mutación es una decisión explícita
-* **Fail fast en compile time**: los errores estructurales no llegan a runtime
-* **Funciones puras para transiciones**: el sistema puede razonarse sin ejecutarse
-
----
-
-## 🔁 Arquitectura Conceptual
-
-El sistema se organiza alrededor de cuatro conceptos:
-
-1. **Estado** — Qué puede existir
-2. **Eventos** — Qué puede pasar
-3. **Transiciones** — Cómo cambia el mundo
-4. **Proyección UI** — Cómo se ve ese estado
-
-La red, la concurrencia y SwiftUI se introducen **después** de que estos conceptos están claros.
-
----
-
-## 📂 Estructura del Repositorio (Conceptual)
-
-* `/Domain`
-
-  * Estados
-  * Eventos
-  * Reducer (función pura de transición)
-
-* `/System`
-
-  * Concurrencia
-  * Networking
-  * Cancelación
-
-* `/UI`
-
-  * Vistas SwiftUI
-  * Renderizado basado en estado
-
-* `/Docs`
-
-  * Decisiones arquitectónicas
-  * Trade-offs explícitos
-
-Cada archivo debe poder responder:
-
-> ¿Qué decisión vive acá?
-
-Si no puede responderla, no debería existir.
-
----
-
-## 🧪 Criterios de Validación
-
-El proyecto se considera exitoso si:
-
-* La UI no contiene lógica de negocio
-* Los estados inválidos no compilan
-* El sistema puede explicarse sin mostrar pantallas
-* Cada transición es explícita y testeable
-* El README se puede leer como un argumento técnico coherente
-
----
-
-## 🧠 Cierre Técnico
-
-Este repositorio no busca demostrar conocimiento de frameworks ni patrones de moda.
-
-Busca demostrar una forma de ingeniería orientada a:
-
-* Reducción de riesgo sistémico
-* Eliminación de clases completas de bugs
-* Escalabilidad cognitiva en equipos
-* Refactors seguros a largo plazo
-
-El diseño explícito de estados y transiciones no es un lujo académico: es una estrategia para reducir costos de mantenimiento y dependencia de conocimiento tácito.
-
-Cuando el dominio está correctamente modelado:
-
-* El compilador detecta inconsistencias temprano
-* Los tests validan comportamiento, no corrigen diseño
-* La UI permanece estable ante cambios internos
-
-Este enfoque es especialmente valioso en contextos donde:
-
-* El producto evoluciona rápidamente
-* Los equipos crecen o rotan
-* El costo de un bug en producción es alto
-
-Ese es el público de este proyecto.
-
----
-
-## 📌 Orden de Desarrollo
-
-A partir de este README, el proyecto se desarrolla estrictamente en este orden:
-
-1. Modelado de estados como tipos (contrato del dominio)
-2. Definición de eventos explícitos
-3. Función pura de transición (reducer)
-4. Introducción controlada de concurrencia
-5. Proyección del estado en SwiftUI
-
-El código es la consecuencia.
-
-Las decisiones vienen primero.
+Ese trade-off es intencional.
